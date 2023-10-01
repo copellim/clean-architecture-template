@@ -1,12 +1,32 @@
 using Application;
 using Infrastructure;
+using Infrastructure.BackgroundJobs;
 using Presentation;
+using Quartz;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddQuartz(configure =>
+{
+    JobKey jobKey = new(nameof(ProcessOuboxMessagesJob));
+
+    configure
+        .AddJob<ProcessOuboxMessagesJob>(jobKey)
+        .AddTrigger(
+            trigger =>
+                trigger.ForJob(jobKey)
+                    .WithSimpleSchedule(
+                        schedule =>
+                            schedule.WithIntervalInSeconds(10)
+                                .RepeatForever()));
+
+});
+
+builder.Services.AddQuartzHostedService();
 
 builder.Services
     .AddApplication()
