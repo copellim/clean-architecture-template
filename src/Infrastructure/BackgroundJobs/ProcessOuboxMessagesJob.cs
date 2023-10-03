@@ -2,6 +2,8 @@
 using Infrastructure.Persistence.Outbox;
 using MediatR;
 using Newtonsoft.Json;
+using Polly;
+using Polly.Retry;
 using Quartz;
 
 namespace Infrastructure.BackgroundJobs;
@@ -31,9 +33,19 @@ public class ProcessOuboxMessagesJob : IJob
                 continue;
             }
 
-            await _publisher.Publish(domainEvent, context.CancellationToken);
+            AsyncRetryPolicy policy = Policy
+                .Handle<Exception>()
+                .WaitAndRetryAsync(
+                    3,
+                    attempt => TimeSpan.FromMilliseconds(50 * attempt));
+
+            PolicyResult result = await policy.ExecuteAndCaptureAsync(() =>
+                           _publisher.Publish(
+                               domainEvent,
+                               context.CancellationToken));
 
             outboxMessage.ProcessedAtUtc = DateTime.UtcNow;
+            outboxMessage.Error = result.FinalException?.Message;
         }
 
         await _dbContext.SaveChangesAsync();
