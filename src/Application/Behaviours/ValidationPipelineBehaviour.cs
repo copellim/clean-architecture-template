@@ -1,4 +1,5 @@
 ﻿using Domain.Shared;
+using FluentResults;
 using FluentValidation;
 using MediatR;
 
@@ -27,7 +28,7 @@ public class ValidationPipelineBehaviour<TRequest, TResponse>
             .Select(validator => validator.Validate(request))
             .SelectMany(validationResult => validationResult.Errors)
             .Where(validationFailure => validationFailure is not null)
-            .Select(failure => new Error(
+            .Select(failure => new CustomError(
                 failure.PropertyName,
                 failure.ErrorMessage))
             .Distinct()

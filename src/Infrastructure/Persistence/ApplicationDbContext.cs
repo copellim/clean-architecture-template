@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions;
-using Domain.Entities;
+using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;

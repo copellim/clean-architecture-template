@@ -7,11 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Shared\Result.cs" />
+    <Compile Remove="Shared\ResultT.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="DomainEvents\" />
     <Folder Include="ValueObjects\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentResults" Version="3.15.2" />
     <PackageReference Include="MediatR" Version="12.1.1" />
   </ItemGroup>
 

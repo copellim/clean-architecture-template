@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Abstractions;

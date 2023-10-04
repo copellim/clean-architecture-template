@@ -1,4 +1,4 @@
-﻿using Domain.Shared;
+﻿using FluentResults;
 using MediatR;
 
 namespace Application.Abstractions.Messaging;
