@@ -1,6 +1,8 @@
 ﻿using Domain.Primitives;
+using Infrastructure.Persistence;
 using Infrastructure.Persistence.Outbox;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Polly;
 using Polly.Retry;
@@ -11,9 +13,14 @@ namespace Infrastructure.BackgroundJobs;
 [DisallowConcurrentExecution]
 public class ProcessOuboxMessagesJob : IJob
 {
-    //private readonly ApplicationDbContext _dbContext;
+    private readonly ApplicationDbContext _dbContext;
     private readonly IPublisher _publisher;
 
+    public ProcessOuboxMessagesJob(ApplicationDbContext dbContext, IPublisher publisher)
+    {
+        _dbContext = dbContext;
+        _publisher = publisher;
+    }
 
     public async Task Execute(IJobExecutionContext context)
     {
